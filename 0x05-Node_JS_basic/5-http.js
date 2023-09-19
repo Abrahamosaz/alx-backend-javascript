@@ -1,7 +1,8 @@
 const http = require("http");
 const { readFile } = require("fs");
 
-const hostName = "127.0.0.1";
+const hostname = "127.0.0.1";
+const port = 1245;
 
 function countStudents(fileName) {
   const students = {};
@@ -44,28 +45,27 @@ function countStudents(fileName) {
   });
 }
 
-const app = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/plain");
-  switch (req.url) {
-    case "/":
-      res.write("Hello Holberton School!");
-      res.end();
-      break;
-    case "/students":
-      res.write("This is the list of our students\n");
-      countStudents(process.argv[2].toString())
-        .then((output) => {
-          const outString = output.slice(0, -1);
-          res.end(outString);
-        })
-        .catch(() => {
-          res.statusCode = 404;
-          res.end("Cannot load the database");
-        });
+const app = http.createServer((request, response) => {
+  response.statusCode = 200;
+  response.setHeader("Content-Type", "text/plain");
+  if (request.url === "/") {
+    response.write("Hello Holberton School!");
+    response.end();
+  }
+  if (request.url === "/students") {
+    response.write("This is the list of our students\n");
+    countStudents(process.argv[2].toString())
+      .then((output) => {
+        const outString = output.slice(0, -1);
+        response.end(outString);
+      })
+      .catch(() => {
+        response.statusCode = 404;
+        response.end("Cannot load the database");
+      });
   }
 });
 
-app.listen(1245, hostName, () => {
-  console.log("server listening on port 1245");
-});
+app.listen(port, hostname, () => {});
+
+module.exports = app;
