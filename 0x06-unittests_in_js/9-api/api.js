@@ -7,13 +7,8 @@ app.get("/", (req, res) => {
   res.status(200).send("Welcome to the payment system");
 });
 
-app.get("/cart/:id", (req, res) => {
-  const id = req.params.id;
-  if (isNaN(id)) {
-    res.status(404).res.end();
-  } else {
-    res.status(200).send(`Payment methods for cart ${id}`);
-  }
+app.get("/cart/:id([0-9]+)", (req, res) => {
+  res.status(200).send(`Payment methods for cart ${id}`);
 });
 
 app.listen(port, () => {
